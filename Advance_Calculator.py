@@ -1,6 +1,6 @@
 import math
 from dataclasses import dataclass
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Dict, Optional
 
 Number = float
 
@@ -21,7 +21,7 @@ def read_float(prompt: str, *, allow_empty: bool = False) -> Optional[Number]:
         try:
             return float(raw)
         except ValueError:
-            print("❌ Invalid input. Please enter a numeric value.")
+            print("Invalid input. Please enter a numeric value.")
 
 
 def read_choice(prompt: str, valid: set[str]) -> str:
@@ -30,7 +30,7 @@ def read_choice(prompt: str, valid: set[str]) -> str:
         choice = input(prompt).strip()
         if choice in valid:
             return choice
-        print("❌ Invalid choice. Please try again.")
+        print("Invalid choice. Please try again.")
 
 
 # ----------------------------
@@ -83,11 +83,11 @@ def cos_deg(angle_deg: Number) -> Number:
 
 
 def tan_deg(angle_deg: Number) -> Number:
-    # Guard: tan blows up near 90 + k*180
+    # Guard: tan becomes undefined near 90 + k*180
     r = math.radians(angle_deg)
     c = math.cos(r)
     if abs(c) < 1e-12:
-        raise ValueError("Tangent is undefined for angles where cosine is 0 (e.g., 90°, 270°, ...).")
+        raise ValueError("Tangent is undefined for angles like 90, 270, etc.")
     return math.tan(r)
 
 
@@ -102,15 +102,16 @@ class MenuItem:
 
 
 def print_header() -> None:
-    print("\n" + "=" * 38)
-    print("      Advanced Calculator (Pro)")
-    print("=" * 38)
+    print("\n" + "=" * 40)
+    print("        Advanced Calculator (Pro)")
+    print("=" * 40)
 
 
 def show_menu(items: Dict[str, MenuItem]) -> None:
     print_header()
     print("Select an operation:")
-    for k in sorted(items.keys(), key=lambda x: int(x) if x.isdigit() else 999):
+    # Sort by numeric choice
+    for k in sorted(items.keys(), key=lambda x: int(x)):
         print(f"{k}. {items[k].label}")
 
 
@@ -119,18 +120,18 @@ def run_binary_op(name: str, op: Callable[[Number, Number], Number]) -> None:
     b = read_float("Enter the second number: ")
     try:
         result = op(a, b)  # type: ignore[arg-type]
-        print(f"✅ {name} result: {result}")
+        print(f"Result ({name}): {result}")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
 
 
 def run_unary_op(name: str, op: Callable[[Number], Number], prompt: str) -> None:
     x = read_float(prompt)
     try:
         result = op(x)  # type: ignore[arg-type]
-        print(f"✅ {name} result: {result}")
+        print(f"Result ({name}): {result}")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
 
 
 def run_log() -> None:
@@ -139,28 +140,25 @@ def run_log() -> None:
     try:
         result = log_op(x, base)  # type: ignore[arg-type]
         base_label = "e" if base is None else str(base)
-        print(f"✅ log base {base_label} result: {result}")
+        print(f"Result (log base {base_label}): {result}")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
 
 
 def main() -> None:
-    items: Dict[str, MenuItem] = {}
-
-    items["1"] = MenuItem("1", "Addition (+)", lambda: run_binary_op("Addition", add))
-    items["2"] = MenuItem("2", "Subtraction (-)", lambda: run_binary_op("Subtraction", sub))
-    items["3"] = MenuItem("3", "Multiplication (*)", lambda: run_binary_op("Multiplication", mul))
-    items["4"] = MenuItem("4", "Division (/)", lambda: run_binary_op("Division", div))
-    items["5"] = MenuItem("5", "Power (^)", lambda: run_binary_op("Power", power))
-
-    items["6"] = MenuItem("6", "Square Root (√)", lambda: run_unary_op("Square Root", sqrt_op, "Enter the number: "))
-    items["7"] = MenuItem("7", "Logarithm (log)", run_log)
-
-    items["8"] = MenuItem("8", "Sine (sin)", lambda: run_unary_op("Sine", sin_deg, "Enter the angle (degrees): "))
-    items["9"] = MenuItem("9", "Cosine (cos)", lambda: run_unary_op("Cosine", cos_deg, "Enter the angle (degrees): "))
-    items["10"] = MenuItem("10", "Tangent (tan)", lambda: run_unary_op("Tangent", tan_deg, "Enter the angle (degrees): "))
-
-    items["11"] = MenuItem("11", "Exit", lambda: None)
+    items: Dict[str, MenuItem] = {
+        "1": MenuItem("1", "Addition (+)", lambda: run_binary_op("Addition", add)),
+        "2": MenuItem("2", "Subtraction (-)", lambda: run_binary_op("Subtraction", sub)),
+        "3": MenuItem("3", "Multiplication (*)", lambda: run_binary_op("Multiplication", mul)),
+        "4": MenuItem("4", "Division (/)", lambda: run_binary_op("Division", div)),
+        "5": MenuItem("5", "Power (^)", lambda: run_binary_op("Power", power)),
+        "6": MenuItem("6", "Square Root (sqrt)", lambda: run_unary_op("Square Root", sqrt_op, "Enter the number: ")),
+        "7": MenuItem("7", "Logarithm (log)", run_log),
+        "8": MenuItem("8", "Sine (sin) [degrees]", lambda: run_unary_op("Sine", sin_deg, "Enter the angle (degrees): ")),
+        "9": MenuItem("9", "Cosine (cos) [degrees]", lambda: run_unary_op("Cosine", cos_deg, "Enter the angle (degrees): ")),
+        "10": MenuItem("10", "Tangent (tan) [degrees]", lambda: run_unary_op("Tangent", tan_deg, "Enter the angle (degrees): ")),
+        "11": MenuItem("11", "Exit", lambda: None),
+    }
 
     valid_choices = set(items.keys())
 
@@ -169,7 +167,7 @@ def main() -> None:
         choice = read_choice("Enter your choice (1-11): ", valid_choices)
 
         if choice == "11":
-            print("👋 Exiting the calculator. Goodbye!")
+            print("Exiting the calculator. Goodbye!")
             break
 
         items[choice].handler()
