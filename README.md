@@ -36,6 +36,7 @@ It supports arithmetic operations, logarithms, trigonometric functions, input va
 
 ---
 
+
 ## 🚀 How to Run
 
 Clone the repository:
@@ -43,3 +44,10 @@ Clone the repository:
 ```bash
 git clone https://github.com/Wadan3/Advance_Calculator_.git
 cd Advance_Calculator_
+
+👨‍💻 Author
+
+Abdul Mosawer Wadan
+
+GitHub: https://github.com/Wadan3
+
