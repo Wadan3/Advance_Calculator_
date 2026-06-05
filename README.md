@@ -1,3 +1,4 @@
+![Python Build](https://github.com/Wadan3/Advance_Calculator_/actions/workflows/python-build.yml/badge.svg)
 # 🧮 Advanced Python Calculator
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
