@@ -105,14 +105,9 @@ python3 Advance_Calculator.py
 
 ---
 
-# 📷 Screenshot
+## 📷 Screenshot
 
-```md
-![Calculator Screenshot](screenshots/calculator-demo.png)
-```
-
-After uploading a screenshot, remove the code block and keep only the image line.
-
+![Advanced Python Calculator](screenshots/screenshot.png)
 ---
 
 # 📋 Sample Menu
